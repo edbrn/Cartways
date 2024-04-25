@@ -1,10 +1,4 @@
 main: com.edbrn.Cartways.App
-name: Campfires
+name: Cartways
 version: 0.1
 api-version: 1.20
-
-commands:
-  campfires:
-    description: Use campfires as spawn points.
-    usage: /<command>
-    permission: campfires
