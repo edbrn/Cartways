@@ -3,28 +3,28 @@ package com.edbrn.Cartways.state;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.bukkit.entity.Minecart;
 
 public class SpeedManagedMinecarts {
-    private Map<UUID, MinecartState> trackedCarts = new HashMap<>();
+  private Map<UUID, MinecartState> trackedCarts = new HashMap<>();
 
-    private static SpeedManagedMinecarts instance;
-    private SpeedManagedMinecarts() {}
+  private static SpeedManagedMinecarts instance;
 
-    public static SpeedManagedMinecarts getShared() {
-        if (instance == null) {
-            instance = new SpeedManagedMinecarts();
-        }
+  private SpeedManagedMinecarts() {}
 
-        return instance;
+  public static SpeedManagedMinecarts getShared() {
+    if (instance == null) {
+      instance = new SpeedManagedMinecarts();
     }
 
-    public void addMinecart(Minecart minecart) {
-        this.trackedCarts.put(minecart.getUniqueId(), new MinecartState(minecart));
-    }
+    return instance;
+  }
 
-    public MinecartState getMinecartState(Minecart minecart) {
-        return this.trackedCarts.get(minecart.getUniqueId());
-    }
+  public void addMinecart(Minecart minecart) {
+    this.trackedCarts.put(minecart.getUniqueId(), new MinecartState(minecart));
+  }
+
+  public MinecartState getMinecartState(Minecart minecart) {
+    return this.trackedCarts.get(minecart.getUniqueId());
+  }
 }

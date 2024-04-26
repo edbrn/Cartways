@@ -1,10 +1,9 @@
 package com.edbrn.Cartways;
 
-import org.bukkit.Server;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.edbrn.Cartways.listeners.DeployCartButtonListener;
 import com.edbrn.Cartways.listeners.MinecartSpeedControl;
+import org.bukkit.Server;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class App extends JavaPlugin {
   @Override
