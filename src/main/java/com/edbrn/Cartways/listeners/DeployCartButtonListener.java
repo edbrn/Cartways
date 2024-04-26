@@ -5,6 +5,9 @@ import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,21 +24,25 @@ public class DeployCartButtonListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {        
+    public void onPlayerInteract(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
-        if (block.getType().name().equals("OAK_BUTTON")) {
-            Location location = block.getLocation();
-            location.add(0, -1, 0);
+        Block blockAbove = block.getRelative(BlockFace.UP);
+        if (block.getType().name().equals("OAK_BUTTON") && blockAbove.getType().name() == "OAK_WALL_SIGN") {
+            Sign sign = (Sign) blockAbove.getState();
+            if (sign.getSide(Side.FRONT).getLine(0).equals("[STATION]")) {
+                Location location = block.getLocation();
+                location.add(0, -1, 0);
 
-            World world = event.getPlayer().getWorld();
-            Minecart minecart = world.spawn(location, Minecart.class);
-            minecart.addPassenger(event.getPlayer());
-            minecart.setVelocity(new Vector(0, 0, -2));
-            minecart.setMaxSpeed(0.3);
+                World world = event.getPlayer().getWorld();
+                Minecart minecart = world.spawn(location, Minecart.class);
+                minecart.addPassenger(event.getPlayer());
+                minecart.setVelocity(new Vector(0, 0, -2));
+                minecart.setMaxSpeed(0.3);
 
-            SpeedManagedMinecarts.getShared().addMinecart(minecart);
+                SpeedManagedMinecarts.getShared().addMinecart(minecart);
 
-            event.getPlayer().sendMessage(minecart.getUniqueId().toString());
+                event.getPlayer().sendMessage(minecart.getUniqueId().toString());
+            }
         }
     }
 }

@@ -27,14 +27,4 @@ public class SpeedManagedMinecarts {
     public MinecartState getMinecartState(Minecart minecart) {
         return this.trackedCarts.get(minecart.getUniqueId());
     }
-
-    public void maintainMinecartSpeedInDirection(Minecart cart) {
-        MinecartState minecartState = this.trackedCarts.get(cart.getUniqueId());
-        if (minecartState == null) {
-            return;
-        } 
-
-        Minecart minecart = minecartState.getInstance();
-        // minecart.getFacing();
-    }
 }
