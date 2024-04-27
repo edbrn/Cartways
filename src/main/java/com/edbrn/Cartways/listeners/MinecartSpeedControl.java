@@ -3,7 +3,6 @@ package com.edbrn.Cartways.listeners;
 import com.edbrn.Cartways.state.MinecartState;
 import com.edbrn.Cartways.state.SpeedManagedMinecarts;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,14 +22,11 @@ public class MinecartSpeedControl implements Listener {
       Minecart minecart = (Minecart) event.getVehicle();
       MinecartState minecartState = SpeedManagedMinecarts.getShared().getMinecartState(minecart);
 
-      Bukkit.broadcastMessage(minecart.getFacing().name());
-
       if (!minecartState.shouldMinecartMove()) {
         return;
       }
 
       if (minecartState.shouldStop()) {
-        Bukkit.broadcastMessage("At station");
         minecartState.stopBreifly();
       } else {
         minecartState.move();
