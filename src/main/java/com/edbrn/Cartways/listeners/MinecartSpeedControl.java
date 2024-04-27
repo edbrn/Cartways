@@ -22,15 +22,11 @@ public class MinecartSpeedControl implements Listener {
       Minecart minecart = (Minecart) event.getVehicle();
       MinecartState minecartState = SpeedManagedMinecarts.getShared().getMinecartState(minecart);
 
-      if (!minecartState.shouldMinecartMove()) {
-        return;
-      }
-
       if (minecartState.shouldStop()) {
         minecartState.stopBreifly();
-      } else {
-        minecartState.move();
       }
+
+      minecartState.move();
     }
   }
 }

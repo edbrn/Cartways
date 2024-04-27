@@ -6,9 +6,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Rail;
+import org.bukkit.block.data.Rail.Shape;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Minecart;
+import org.bukkit.material.Rails;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -16,6 +20,9 @@ public class MinecartState {
   private Minecart instance;
   private boolean isStopped = false;
   private boolean hasRecentlyStopped = false;
+
+  private final static double DEFAULT_SPEED = 0.4;
+  private final static double DEFAULT_STARTUP_SPEED = 0.25;
 
   public MinecartState(Minecart minecart) {
     this.instance = minecart;
@@ -30,7 +37,7 @@ public class MinecartState {
   }
 
   public boolean shouldStop() {
-    return !this.hasRecentlyStopped && this.isAtStation();
+    return !this.isStopped && !this.hasRecentlyStopped && this.isAtStation();
   }
 
   public void moveBackward() {
@@ -53,6 +60,7 @@ public class MinecartState {
                 if (self.isAtEndOfLine()) {
                   self.moveBackward();
                 } else {
+                    self.instance.setMaxSpeed(MinecartState.DEFAULT_STARTUP_SPEED);
                   self.move();
                 }
 
@@ -61,6 +69,7 @@ public class MinecartState {
                         JavaPlugin.getPlugin(App.class),
                         new Runnable() {
                           public void run() {
+                            self.instance.setMaxSpeed(MinecartState.DEFAULT_SPEED);
                             self.hasRecentlyStopped = false;
                           }
                         },
@@ -72,14 +81,10 @@ public class MinecartState {
 
   private double getNewSpeedFromSignalSignOrCurrentSpeed(Block block) {
     if (block.getType().equals(Material.OAK_WALL_SIGN)) {
-      Bukkit.broadcastMessage("found sign");
       Sign sign = (Sign) block.getState();
       SignSide side = sign.getSide(Side.FRONT);
-      Bukkit.broadcastMessage(side.getLine(0));
-      Bukkit.broadcastMessage(side.getLine(1));
       if (side.getLine(0).equals("[SPEED SIGNAL]")) {
         String newSpeed = side.getLine(1);
-        Bukkit.broadcastMessage("found speed");
         try {
           Double newSpeedDouble = Double.parseDouble(newSpeed);
           if (newSpeedDouble > 1) {
@@ -115,8 +120,54 @@ public class MinecartState {
   }
 
   public void move() {
-    this.instance.setMaxSpeed(getSpeed());
-    this.instance.setVelocity(this.instance.getFacing().getDirection());
+    Block railUnder = this.instance.getWorld().getBlockAt(this.instance.getLocation());
+
+    if (this.isStopped || !railUnder.getType().equals(Material.RAIL)) {
+        this.instance.setVelocity(new Vector(0, 0, 0));
+        return;
+    }
+
+    Rail rail = (Rail) railUnder.getBlockData();
+    Shape railShape = rail.getShape();
+
+    BlockFace facing = this.instance.getFacing();
+    Bukkit.broadcastMessage(facing.name());
+    Bukkit.broadcastMessage(railShape.name());
+
+    this.instance.setMaxSpeed(0.1);
+
+    if (facing.equals(BlockFace.NORTH)) {
+        if (railShape.equals(Shape.SOUTH_EAST)) {
+            this.instance.setVelocity(new Vector(1, 0, -1));
+        } else if (railShape.equals(Shape.SOUTH_WEST)) {
+            this.instance.setVelocity(new Vector(-1, 0, -1));
+        }
+    } else if (facing.equals(BlockFace.SOUTH)) {
+        if (railShape.equals(Shape.SOUTH_WEST)) {
+            this.instance.setVelocity(new Vector(1, 0, 1));
+        } else if (railShape.equals(Shape.NORTH_WEST)) {
+            this.instance.setVelocity(new Vector(-1, 0, 1));
+        } else if (railShape.equals(Shape.NORTH_EAST)) {
+            this.instance.setVelocity(new Vector(1, 0, 1));
+        }
+    } else if (facing.equals(BlockFace.EAST)) {
+        if (railShape.equals(Shape.SOUTH_EAST)) {
+            this.instance.setVelocity(new Vector(1, 0, -1));
+        } else if (railShape.equals(Shape.SOUTH_WEST)) {
+            this.instance.setVelocity(new Vector(1, 0, 1));
+        } else if (railShape.equals(Shape.NORTH_WEST)) {
+            this.instance.setVelocity(new Vector(1, 0, -1));
+        }
+    } else if (facing.equals(BlockFace.WEST)) {
+        if (railShape.equals(Shape.NORTH_EAST)) {
+            this.instance.setVelocity(new Vector(-1, 0, -1));
+        } else if (railShape.equals(Shape.SOUTH_EAST)) {
+            this.instance.setVelocity(new Vector(-1, 0, 1));
+        }
+    }
+    
+    // this.instance.setMaxSpeed(getSpeed());
+    // this.instance.setVelocity(this.instance.getFacing().getDirection());
   }
 
   public void stopMoving() {
