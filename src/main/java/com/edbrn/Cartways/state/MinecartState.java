@@ -12,10 +12,13 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Minecart;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
 public class MinecartState {
   private Minecart instance;
+  private BukkitScheduler scheduler;
+
   private boolean isStopped = false;
   private boolean hasRecentlyStopped = false;
 
@@ -24,6 +27,12 @@ public class MinecartState {
 
   public MinecartState(Minecart minecart) {
     this.instance = minecart;
+    this.scheduler = Bukkit.getScheduler();
+  }
+
+  public MinecartState(Minecart minecart, BukkitScheduler scheduler) {
+    this.instance = minecart;
+    this.scheduler = scheduler;
   }
 
   public Minecart getInstance() {
@@ -47,34 +56,32 @@ public class MinecartState {
 
     isStopped = true;
     MinecartState self = this;
-    Bukkit.getScheduler()
-        .scheduleSyncDelayedTask(
-            JavaPlugin.getPlugin(App.class),
-            new Runnable() {
-              public void run() {
-                self.hasRecentlyStopped = true;
-                self.isStopped = false;
+    self.scheduler.scheduleSyncDelayedTask(
+        JavaPlugin.getPlugin(App.class),
+        new Runnable() {
+          public void run() {
+            self.hasRecentlyStopped = true;
+            self.isStopped = false;
 
-                if (self.isAtEndOfLine()) {
-                  self.moveBackward();
-                } else {
-                  self.instance.setMaxSpeed(MinecartState.DEFAULT_STARTUP_SPEED);
-                  self.move();
-                }
+            if (self.isAtEndOfLine()) {
+              self.moveBackward();
+            } else {
+              self.instance.setMaxSpeed(MinecartState.DEFAULT_STARTUP_SPEED);
+              self.move();
+            }
 
-                Bukkit.getScheduler()
-                    .scheduleSyncDelayedTask(
-                        JavaPlugin.getPlugin(App.class),
-                        new Runnable() {
-                          public void run() {
-                            self.instance.setMaxSpeed(MinecartState.DEFAULT_SPEED);
-                            self.hasRecentlyStopped = false;
-                          }
-                        },
-                        40);
-              }
-            },
-            90);
+            self.scheduler.scheduleSyncDelayedTask(
+                JavaPlugin.getPlugin(App.class),
+                new Runnable() {
+                  public void run() {
+                    self.instance.setMaxSpeed(MinecartState.DEFAULT_SPEED);
+                    self.hasRecentlyStopped = false;
+                  }
+                },
+                40);
+          }
+        },
+        90);
   }
 
   private double getNewSpeedFromSignalSignOrCurrentSpeed(Block block) {
