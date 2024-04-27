@@ -1,8 +1,8 @@
 package com.edbrn.Cartways;
 
 import com.edbrn.Cartways.listeners.DeployCartButtonListener;
-import com.edbrn.Cartways.listeners.MinecartSpeedControl;
-import org.bukkit.Bukkit;
+import com.edbrn.Cartways.listeners.MinecartSpeedControlListener;
+import com.edbrn.Cartways.state.SpeedManagedMinecarts;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,8 +16,13 @@ public class App extends JavaPlugin {
     server
         .getPluginManager()
         .registerEvents(
-            new DeployCartButtonListener(this.getLogger(), Bukkit.getScheduler()), this);
-    server.getPluginManager().registerEvents(new MinecartSpeedControl(this.getLogger()), this);
+            new DeployCartButtonListener(this.getLogger(), SpeedManagedMinecarts.getShared()),
+            this);
+    server
+        .getPluginManager()
+        .registerEvents(
+            new MinecartSpeedControlListener(this.getLogger(), SpeedManagedMinecarts.getShared()),
+            this);
   }
 
   @Override

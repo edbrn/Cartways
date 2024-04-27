@@ -1,5 +1,6 @@
 package com.edbrn.Cartways.listeners;
 
+import com.edbrn.Cartways.state.SpeedManagedMinecarts;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +13,6 @@ import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -55,7 +55,7 @@ public class DeployCartButtonListenerTest {
     Mockito.when(world.spawn(Mockito.any(Location.class), Mockito.any())).thenReturn(minecart);
 
     DeployCartButtonListener listener =
-        new DeployCartButtonListener(logger, Mockito.mock(BukkitScheduler.class));
+        new DeployCartButtonListener(logger, Mockito.mock(SpeedManagedMinecarts.class));
     listener.onPlayerInteract(event);
 
     Mockito.verify(minecart).addPassenger(player);
@@ -100,7 +100,7 @@ public class DeployCartButtonListenerTest {
     Mockito.when(world.spawn(Mockito.any(Location.class), Mockito.any())).thenReturn(minecart);
 
     DeployCartButtonListener listener =
-        new DeployCartButtonListener(logger, Mockito.mock(BukkitScheduler.class));
+        new DeployCartButtonListener(logger, Mockito.mock(SpeedManagedMinecarts.class));
     listener.onPlayerInteract(event);
 
     Mockito.verify(world, Mockito.times(0)).spawn(Mockito.any(Location.class), Mockito.any());
@@ -143,7 +143,7 @@ public class DeployCartButtonListenerTest {
     Mockito.when(world.spawn(Mockito.any(Location.class), Mockito.any())).thenReturn(minecart);
 
     DeployCartButtonListener listener =
-        new DeployCartButtonListener(logger, Mockito.mock(BukkitScheduler.class));
+        new DeployCartButtonListener(logger, Mockito.mock(SpeedManagedMinecarts.class));
     listener.onPlayerInteract(event);
 
     Mockito.verify(world, Mockito.times(0)).spawn(Mockito.any(Location.class), Mockito.any());

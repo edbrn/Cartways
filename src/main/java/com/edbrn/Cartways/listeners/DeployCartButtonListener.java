@@ -13,16 +13,15 @@ import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
 public class DeployCartButtonListener implements Listener {
   Logger logger;
-  BukkitScheduler scheduler;
+  SpeedManagedMinecarts speedManagedMinecarts;
 
-  public DeployCartButtonListener(Logger logger, BukkitScheduler scheduler) {
+  public DeployCartButtonListener(Logger logger, SpeedManagedMinecarts speedManagedMinecarts) {
     this.logger = logger;
-    this.scheduler = scheduler;
+    this.speedManagedMinecarts = speedManagedMinecarts;
   }
 
   @EventHandler
@@ -42,7 +41,7 @@ public class DeployCartButtonListener implements Listener {
         minecart.setVelocity(new Vector(0, 0, -2));
         minecart.setMaxSpeed(0.3);
 
-        SpeedManagedMinecarts.getShared(this.scheduler).addMinecart(minecart);
+        this.speedManagedMinecarts.addMinecart(minecart);
       }
     }
   }
