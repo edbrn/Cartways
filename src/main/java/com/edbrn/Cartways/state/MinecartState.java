@@ -150,25 +150,25 @@ public class MinecartState {
   public boolean isAtEndOfLine() {
     Block currentBlock = this.instance.getWorld().getBlockAt(this.instance.getLocation());
 
-    // if (this.instance.getFacing().equals(BlockFace.EAST)
-    //     && this.isStationBlockNear(currentBlock.getRelative(1, 2, 0))) {
-    //   return true;
-    // }
+    if (this.instance.getFacing().equals(BlockFace.EAST)
+        && !currentBlock.getRelative(2, 0, 0).getType().equals(Material.RAIL)) {
+      return true;
+    }
 
-    // if (this.instance.getFacing().equals(BlockFace.WEST)
-    //     && this.isStationBlockNear(currentBlock.getRelative(-1, 2, 0))) {
-    //   return true;
-    // }
+    if (this.instance.getFacing().equals(BlockFace.WEST)
+        && !currentBlock.getRelative(-2, 0, 0).getType().equals(Material.RAIL)) {
+      return true;
+    }
 
-    // if (this.instance.getFacing().equals(BlockFace.NORTH)
-    //     && this.isStationBlockNear(currentBlock.getRelative(0, 2, -1))) {
-    //   return true;
-    // }
+    if (this.instance.getFacing().equals(BlockFace.NORTH)
+        && !currentBlock.getRelative(0, 0, -2).getType().equals(Material.RAIL)) {
+      return true;
+    }
 
-    // if (this.instance.getFacing().equals(BlockFace.SOUTH)
-    //     && this.isStationBlockNear(currentBlock.getRelative(0, 2, 1))) {
-    //   return true;
-    // }
+    if (this.instance.getFacing().equals(BlockFace.SOUTH)
+        && !currentBlock.getRelative(0, 0, 2).getType().equals(Material.RAIL)) {
+      return true;
+    }
 
     return false;
   }
