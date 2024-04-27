@@ -2,11 +2,16 @@ package com.edbrn.Cartways.listeners;
 
 import com.edbrn.Cartways.state.MinecartState;
 import com.edbrn.Cartways.state.SpeedManagedMinecarts;
+
+import java.util.UUID;
 import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
@@ -17,17 +22,6 @@ public class MinecartSpeedControl implements Listener {
 
   public MinecartSpeedControl(Logger logger) {
     this.logger = logger;
-  }
-
-  private boolean isStationBlockNear(Block block) {
-    if (block.getType().name().equals("OAK_WALL_SIGN")) {
-      Sign sign = (Sign) block.getState();
-      if (sign.getSide(Side.FRONT).getLine(0).equals("[STATION]")) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   @EventHandler
@@ -41,11 +35,8 @@ public class MinecartSpeedControl implements Listener {
         return;
       }
 
-      Block nextBlock = event.getFrom().getBlock();
-      if (this.isStationBlockNear(nextBlock.getRelative(1, 2, 0))
-          || this.isStationBlockNear(nextBlock.getRelative(-1, 2, 0))
-          || this.isStationBlockNear(nextBlock.getRelative(0, 2, 1))
-          || this.isStationBlockNear(nextBlock.getRelative(0, 2, -1))) {
+      if (minecartState.isAtStation()) {
+        Bukkit.broadcastMessage("At station");
         minecartState.setReachedStation();
         minecart.setVelocity(new Vector(0, 0, 0));
       } else {

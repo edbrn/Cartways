@@ -2,6 +2,9 @@ package com.edbrn.Cartways.state;
 
 import com.edbrn.Cartways.App;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Minecart;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -50,5 +53,35 @@ public class MinecartState {
               }
             },
             90);
+  }
+
+  public boolean isApproachingStation() {
+    return false;
+  }
+
+  private boolean isStationBlockNear(Block block) {
+    if (block.getType().name().equals("OAK_WALL_SIGN")) {
+      Sign sign = (Sign) block.getState();
+      if (sign.getSide(Side.FRONT).getLine(0).equals("[STATION]")) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public boolean isAtStation() {
+    Block currentBlock = this.instance.getWorld().getBlockAt(this.instance.getLocation());
+
+    if (
+        this.isStationBlockNear(currentBlock.getRelative(1, 2, 0))
+          || this.isStationBlockNear(currentBlock.getRelative(-1, 2, 0))
+          || this.isStationBlockNear(currentBlock.getRelative(0, 2, 1))
+          || this.isStationBlockNear(currentBlock.getRelative(0, 2, -1))
+    ) {
+        return true;
+    }
+
+    return false;
   }
 }
