@@ -2,6 +2,7 @@ package com.edbrn.Cartways;
 
 import com.edbrn.Cartways.listeners.DeployCartButtonListener;
 import com.edbrn.Cartways.listeners.MinecartSpeedControl;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,7 +13,10 @@ public class App extends JavaPlugin {
 
     Server server = this.getServer();
 
-    server.getPluginManager().registerEvents(new DeployCartButtonListener(this.getLogger()), this);
+    server
+        .getPluginManager()
+        .registerEvents(
+            new DeployCartButtonListener(this.getLogger(), Bukkit.getScheduler()), this);
     server.getPluginManager().registerEvents(new MinecartSpeedControl(this.getLogger()), this);
   }
 
