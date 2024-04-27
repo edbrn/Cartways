@@ -6,13 +6,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rail;
 import org.bukkit.block.data.Rail.Shape;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Minecart;
-import org.bukkit.material.Rails;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -21,8 +19,8 @@ public class MinecartState {
   private boolean isStopped = false;
   private boolean hasRecentlyStopped = false;
 
-  private final static double DEFAULT_SPEED = 0.4;
-  private final static double DEFAULT_STARTUP_SPEED = 0.25;
+  private static final double DEFAULT_SPEED = 0.4;
+  private static final double DEFAULT_STARTUP_SPEED = 0.25;
 
   public MinecartState(Minecart minecart) {
     this.instance = minecart;
@@ -60,7 +58,7 @@ public class MinecartState {
                 if (self.isAtEndOfLine()) {
                   self.moveBackward();
                 } else {
-                    self.instance.setMaxSpeed(MinecartState.DEFAULT_STARTUP_SPEED);
+                  self.instance.setMaxSpeed(MinecartState.DEFAULT_STARTUP_SPEED);
                   self.move();
                 }
 
@@ -123,8 +121,8 @@ public class MinecartState {
     Block railUnder = this.instance.getWorld().getBlockAt(this.instance.getLocation());
 
     if (this.isStopped || !railUnder.getType().equals(Material.RAIL)) {
-        this.instance.setVelocity(new Vector(0, 0, 0));
-        return;
+      this.instance.setVelocity(new Vector(0, 0, 0));
+      return;
     }
 
     this.instance.setMaxSpeed(getSpeed());
@@ -134,41 +132,41 @@ public class MinecartState {
     BlockFace facing = this.instance.getFacing();
 
     if (facing.equals(BlockFace.NORTH)) {
-        if (railShape.equals(Shape.SOUTH_EAST)) {
-            this.instance.setVelocity(new Vector(1, 0, -1));
-        } else if (railShape.equals(Shape.SOUTH_WEST)) {
-            this.instance.setVelocity(new Vector(-1, 0, -1));
-        } else if (railShape.equals(Shape.NORTH_SOUTH)) {
-            this.instance.setVelocity(new Vector(0, 0, -1));
-        }
+      if (railShape.equals(Shape.SOUTH_EAST)) {
+        this.instance.setVelocity(new Vector(1, 0, -1));
+      } else if (railShape.equals(Shape.SOUTH_WEST)) {
+        this.instance.setVelocity(new Vector(-1, 0, -1));
+      } else if (railShape.equals(Shape.NORTH_SOUTH)) {
+        this.instance.setVelocity(new Vector(0, 0, -1));
+      }
     } else if (facing.equals(BlockFace.SOUTH)) {
-        if (railShape.equals(Shape.SOUTH_WEST)) {
-            this.instance.setVelocity(new Vector(1, 0, 1));
-        } else if (railShape.equals(Shape.NORTH_WEST)) {
-            this.instance.setVelocity(new Vector(-1, 0, 1));
-        } else if (railShape.equals(Shape.NORTH_EAST)) {
-            this.instance.setVelocity(new Vector(1, 0, 1));
-        } else if (railShape.equals(Shape.NORTH_SOUTH)) {
-            this.instance.setVelocity(new Vector(0, 0, 1));
-        }
+      if (railShape.equals(Shape.SOUTH_WEST)) {
+        this.instance.setVelocity(new Vector(1, 0, 1));
+      } else if (railShape.equals(Shape.NORTH_WEST)) {
+        this.instance.setVelocity(new Vector(-1, 0, 1));
+      } else if (railShape.equals(Shape.NORTH_EAST)) {
+        this.instance.setVelocity(new Vector(1, 0, 1));
+      } else if (railShape.equals(Shape.NORTH_SOUTH)) {
+        this.instance.setVelocity(new Vector(0, 0, 1));
+      }
     } else if (facing.equals(BlockFace.EAST)) {
-        if (railShape.equals(Shape.SOUTH_EAST)) {
-            this.instance.setVelocity(new Vector(1, 0, -1));
-        } else if (railShape.equals(Shape.SOUTH_WEST)) {
-            this.instance.setVelocity(new Vector(1, 0, 1));
-        } else if (railShape.equals(Shape.NORTH_WEST)) {
-            this.instance.setVelocity(new Vector(1, 0, -1));
-        } else if (railShape.equals(Shape.EAST_WEST)) {
-            this.instance.setVelocity(new Vector(1, 0, 0));
-        }
+      if (railShape.equals(Shape.SOUTH_EAST)) {
+        this.instance.setVelocity(new Vector(1, 0, -1));
+      } else if (railShape.equals(Shape.SOUTH_WEST)) {
+        this.instance.setVelocity(new Vector(1, 0, 1));
+      } else if (railShape.equals(Shape.NORTH_WEST)) {
+        this.instance.setVelocity(new Vector(1, 0, -1));
+      } else if (railShape.equals(Shape.EAST_WEST)) {
+        this.instance.setVelocity(new Vector(1, 0, 0));
+      }
     } else if (facing.equals(BlockFace.WEST)) {
-        if (railShape.equals(Shape.NORTH_EAST)) {
-            this.instance.setVelocity(new Vector(-1, 0, -1));
-        } else if (railShape.equals(Shape.SOUTH_EAST)) {
-            this.instance.setVelocity(new Vector(-1, 0, 1));
-        } else if (railShape.equals(Shape.EAST_WEST)) {
-            this.instance.setVelocity(new Vector(-1, 0, 0));
-        }
+      if (railShape.equals(Shape.NORTH_EAST)) {
+        this.instance.setVelocity(new Vector(-1, 0, -1));
+      } else if (railShape.equals(Shape.SOUTH_EAST)) {
+        this.instance.setVelocity(new Vector(-1, 0, 1));
+      } else if (railShape.equals(Shape.EAST_WEST)) {
+        this.instance.setVelocity(new Vector(-1, 0, 0));
+      }
     }
   }
 
