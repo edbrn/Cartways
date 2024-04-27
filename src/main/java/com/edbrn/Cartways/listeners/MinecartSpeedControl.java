@@ -31,19 +31,15 @@ public class MinecartSpeedControl implements Listener {
       Minecart minecart = (Minecart) event.getVehicle();
       MinecartState minecartState = SpeedManagedMinecarts.getShared().getMinecartState(minecart);
 
-      if (minecartState.getIsAtStation()) {
+      if (!minecartState.shouldMinecartMove()) {
         return;
       }
 
-      if (minecartState.isAtStation()) {
+      if (minecartState.shouldStop()) {
         Bukkit.broadcastMessage("At station");
-        minecartState.setReachedStation();
-        minecart.setVelocity(new Vector(0, 0, 0));
+        minecartState.stopBreifly();
       } else {
-        Vector direction = minecartState.getInstance().getFacing().getDirection();
-        minecartState
-            .getInstance()
-            .setVelocity(new Vector(direction.getX(), direction.getY(), direction.getZ()));
+        minecartState.move();
       }
     }
   }

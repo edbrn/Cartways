@@ -2,7 +2,9 @@ package com.edbrn.Cartways.state;
 
 import com.edbrn.Cartways.App;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Minecart;
@@ -11,7 +13,8 @@ import org.bukkit.util.Vector;
 
 public class MinecartState {
   private Minecart instance;
-  private boolean isAtStation = false;
+  private boolean isStopped = false;
+  private boolean hasRecentlyStopped = false;
 
   public MinecartState(Minecart minecart) {
     this.instance = minecart;
@@ -21,42 +24,48 @@ public class MinecartState {
     return this.instance;
   }
 
-  public boolean getIsAtStation() {
-    return isAtStation;
+  public boolean shouldMinecartMove() {
+    return !this.isStopped;
   }
 
-  public void setLeftStation() {
-    isAtStation = false;
+  public boolean shouldStop() {
+    return !this.hasRecentlyStopped && this.isAtStation();
   }
 
-  public void setReachedStation() {
-    isAtStation = true;
+  public void stopBreifly() {    
+    this.stopMoving();
+
+    isStopped = true;
     MinecartState self = this;
     Bukkit.getScheduler()
         .scheduleSyncDelayedTask(
             JavaPlugin.getPlugin(App.class),
             new Runnable() {
               public void run() {
-                Vector direction = self.instance.getFacing().getDirection();
-                self.instance.setVelocity(
-                    new Vector(direction.getX(), direction.getY(), direction.getZ()));
+                self.hasRecentlyStopped = true;
+                self.isStopped = false;
+                self.move();
 
                 Bukkit.getScheduler()
                     .scheduleSyncDelayedTask(
                         JavaPlugin.getPlugin(App.class),
                         new Runnable() {
                           public void run() {
-                            self.setLeftStation();
+                            self.hasRecentlyStopped = false;
                           }
                         },
-                        20);
+                        40);
               }
             },
             90);
   }
 
-  public boolean isApproachingStation() {
-    return false;
+  public void move() {
+    this.instance.setVelocity(this.instance.getFacing().getDirection());
+  }
+
+  public void stopMoving() {
+    this.instance.setVelocity(new Vector(0, 0, 0));
   }
 
   private boolean isStationBlockNear(Block block) {
@@ -83,5 +92,19 @@ public class MinecartState {
     }
 
     return false;
+  }
+
+  private Block getNextBlockInDirectionOfTravel() {
+    Block currentBlock = this.instance.getWorld().getBlockAt(this.instance.getLocation());
+
+    BlockFace facing = this.instance.getFacing();
+    Block nextBlock = currentBlock.getRelative(facing);
+
+    return nextBlock;
+  }
+
+  public boolean isAtEndOfLine() {
+    Block nextBlock = this.getNextBlockInDirectionOfTravel();
+    return !nextBlock.getType().equals(Material.RAIL);
   }
 }
