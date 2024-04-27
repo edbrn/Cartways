@@ -127,12 +127,11 @@ public class MinecartState {
         return;
     }
 
+    this.instance.setMaxSpeed(getSpeed());
+
     Rail rail = (Rail) railUnder.getBlockData();
     Shape railShape = rail.getShape();
-
     BlockFace facing = this.instance.getFacing();
-
-    this.instance.setMaxSpeed(0.1);
 
     if (facing.equals(BlockFace.NORTH)) {
         if (railShape.equals(Shape.SOUTH_EAST)) {
@@ -171,9 +170,6 @@ public class MinecartState {
             this.instance.setVelocity(new Vector(-1, 0, 0));
         }
     }
-    
-    // this.instance.setMaxSpeed(getSpeed());
-    // this.instance.setVelocity(this.instance.getFacing().getDirection());
   }
 
   public void stopMoving() {
