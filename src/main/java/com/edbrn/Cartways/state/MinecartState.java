@@ -2,7 +2,6 @@ package com.edbrn.Cartways.state;
 
 import com.edbrn.Cartways.App;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -32,7 +31,11 @@ public class MinecartState {
     return !this.hasRecentlyStopped && this.isAtStation();
   }
 
-  public void stopBreifly() {    
+  public void moveBackward() {
+    this.instance.setVelocity(this.instance.getFacing().getOppositeFace().getDirection());
+  }
+
+  public void stopBreifly() {
     this.stopMoving();
 
     isStopped = true;
@@ -44,7 +47,12 @@ public class MinecartState {
               public void run() {
                 self.hasRecentlyStopped = true;
                 self.isStopped = false;
-                self.move();
+
+                if (self.isAtEndOfLine()) {
+                  self.moveBackward();
+                } else {
+                  self.move();
+                }
 
                 Bukkit.getScheduler()
                     .scheduleSyncDelayedTask(
@@ -82,29 +90,39 @@ public class MinecartState {
   public boolean isAtStation() {
     Block currentBlock = this.instance.getWorld().getBlockAt(this.instance.getLocation());
 
-    if (
-        this.isStationBlockNear(currentBlock.getRelative(1, 2, 0))
-          || this.isStationBlockNear(currentBlock.getRelative(-1, 2, 0))
-          || this.isStationBlockNear(currentBlock.getRelative(0, 2, 1))
-          || this.isStationBlockNear(currentBlock.getRelative(0, 2, -1))
-    ) {
-        return true;
+    if (this.isStationBlockNear(currentBlock.getRelative(1, 2, 0))
+        || this.isStationBlockNear(currentBlock.getRelative(-1, 2, 0))
+        || this.isStationBlockNear(currentBlock.getRelative(0, 2, 1))
+        || this.isStationBlockNear(currentBlock.getRelative(0, 2, -1))) {
+      return true;
     }
 
     return false;
   }
 
-  private Block getNextBlockInDirectionOfTravel() {
+  public boolean isAtEndOfLine() {
     Block currentBlock = this.instance.getWorld().getBlockAt(this.instance.getLocation());
 
-    BlockFace facing = this.instance.getFacing();
-    Block nextBlock = currentBlock.getRelative(facing);
+    if (this.instance.getFacing().equals(BlockFace.EAST)
+        && this.isStationBlockNear(currentBlock.getRelative(1, 2, 0))) {
+      return true;
+    }
 
-    return nextBlock;
-  }
+    if (this.instance.getFacing().equals(BlockFace.WEST)
+        && this.isStationBlockNear(currentBlock.getRelative(-1, 2, 0))) {
+      return true;
+    }
 
-  public boolean isAtEndOfLine() {
-    Block nextBlock = this.getNextBlockInDirectionOfTravel();
-    return !nextBlock.getType().equals(Material.RAIL);
+    if (this.instance.getFacing().equals(BlockFace.NORTH)
+        && this.isStationBlockNear(currentBlock.getRelative(0, 2, -1))) {
+      return true;
+    }
+
+    if (this.instance.getFacing().equals(BlockFace.SOUTH)
+        && this.isStationBlockNear(currentBlock.getRelative(0, 2, 1))) {
+      return true;
+    }
+
+    return false;
   }
 }
