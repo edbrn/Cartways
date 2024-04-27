@@ -131,8 +131,6 @@ public class MinecartState {
     Shape railShape = rail.getShape();
 
     BlockFace facing = this.instance.getFacing();
-    Bukkit.broadcastMessage(facing.name());
-    Bukkit.broadcastMessage(railShape.name());
 
     this.instance.setMaxSpeed(0.1);
 
@@ -141,6 +139,8 @@ public class MinecartState {
             this.instance.setVelocity(new Vector(1, 0, -1));
         } else if (railShape.equals(Shape.SOUTH_WEST)) {
             this.instance.setVelocity(new Vector(-1, 0, -1));
+        } else if (railShape.equals(Shape.NORTH_SOUTH)) {
+            this.instance.setVelocity(new Vector(0, 0, -1));
         }
     } else if (facing.equals(BlockFace.SOUTH)) {
         if (railShape.equals(Shape.SOUTH_WEST)) {
@@ -149,6 +149,8 @@ public class MinecartState {
             this.instance.setVelocity(new Vector(-1, 0, 1));
         } else if (railShape.equals(Shape.NORTH_EAST)) {
             this.instance.setVelocity(new Vector(1, 0, 1));
+        } else if (railShape.equals(Shape.NORTH_SOUTH)) {
+            this.instance.setVelocity(new Vector(0, 0, 1));
         }
     } else if (facing.equals(BlockFace.EAST)) {
         if (railShape.equals(Shape.SOUTH_EAST)) {
@@ -157,12 +159,16 @@ public class MinecartState {
             this.instance.setVelocity(new Vector(1, 0, 1));
         } else if (railShape.equals(Shape.NORTH_WEST)) {
             this.instance.setVelocity(new Vector(1, 0, -1));
+        } else if (railShape.equals(Shape.EAST_WEST)) {
+            this.instance.setVelocity(new Vector(1, 0, 0));
         }
     } else if (facing.equals(BlockFace.WEST)) {
         if (railShape.equals(Shape.NORTH_EAST)) {
             this.instance.setVelocity(new Vector(-1, 0, -1));
         } else if (railShape.equals(Shape.SOUTH_EAST)) {
             this.instance.setVelocity(new Vector(-1, 0, 1));
+        } else if (railShape.equals(Shape.EAST_WEST)) {
+            this.instance.setVelocity(new Vector(-1, 0, 0));
         }
     }
     
