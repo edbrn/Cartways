@@ -85,7 +85,7 @@ public class MinecartState {
   }
 
   private double getNewSpeedFromSignalSignOrCurrentSpeed(Block block) {
-    if (block.getType().equals(Material.OAK_WALL_SIGN)) {
+    if (block.getType().equals(Material.OAK_SIGN)) {
       Sign sign = (Sign) block.getState();
       SignSide side = sign.getSide(Side.FRONT);
       if (side.getLine(0).equals("[SPEED SIGNAL]")) {
@@ -108,20 +108,7 @@ public class MinecartState {
 
   public double getSpeed() {
     Block currentBlock = this.instance.getWorld().getBlockAt(this.instance.getLocation());
-
-    if (this.instance.getFacing().equals(BlockFace.WEST)) {
-      return this.getNewSpeedFromSignalSignOrCurrentSpeed(
-          currentBlock.getRelative(BlockFace.SOUTH));
-    } else if (this.instance.getFacing().equals(BlockFace.NORTH)) {
-      return this.getNewSpeedFromSignalSignOrCurrentSpeed(currentBlock.getRelative(BlockFace.WEST));
-    } else if (this.instance.getFacing().equals(BlockFace.SOUTH)) {
-      return this.getNewSpeedFromSignalSignOrCurrentSpeed(currentBlock.getRelative(BlockFace.EAST));
-    } else if (this.instance.getFacing().equals(BlockFace.EAST)) {
-      return this.getNewSpeedFromSignalSignOrCurrentSpeed(
-          currentBlock.getRelative(BlockFace.NORTH));
-    }
-
-    return this.instance.getMaxSpeed();
+    return this.getNewSpeedFromSignalSignOrCurrentSpeed(currentBlock.getRelative(0, -2, 0));
   }
 
   public void move() {
@@ -181,8 +168,8 @@ public class MinecartState {
     this.instance.setVelocity(new Vector(0, 0, 0));
   }
 
-  private boolean isStationBlockNear(Block block) {
-    if (block.getType().name().equals("OAK_WALL_SIGN")) {
+  private boolean isStationSign(Block block) {
+    if (block.getType().equals(Material.OAK_SIGN)) {
       Sign sign = (Sign) block.getState();
       if (sign.getSide(Side.FRONT).getLine(0).equals("[STATION]")) {
         return true;
@@ -195,10 +182,7 @@ public class MinecartState {
   public boolean isAtStation() {
     Block currentBlock = this.instance.getWorld().getBlockAt(this.instance.getLocation());
 
-    if (this.isStationBlockNear(currentBlock.getRelative(1, 2, 0))
-        || this.isStationBlockNear(currentBlock.getRelative(-1, 2, 0))
-        || this.isStationBlockNear(currentBlock.getRelative(0, 2, 1))
-        || this.isStationBlockNear(currentBlock.getRelative(0, 2, -1))) {
+    if (this.isStationSign(currentBlock.getRelative(0, -2, 0))) {
       return true;
     }
 

@@ -20,12 +20,12 @@ import org.mockito.Mockito;
 
 public class MinecartStateTest {
   private Minecart setUpMinecartAndRailwayWithSpeedSign(
-      BlockFace minecartDirection, BlockFace blockToLeftDirection, Shape railShape) {
+      BlockFace minecartDirection, Shape railShape) {
     Minecart minecart = Mockito.mock(Minecart.class);
     Location minecartLocation = Mockito.mock(Location.class);
 
     Block blockUnderMinecart = Mockito.mock(Block.class);
-    Block blockToLeftOfMinecart = Mockito.mock(Block.class);
+    Block blockUnderRail = Mockito.mock(Block.class);
     Material material = Material.RAIL;
 
     Mockito.when(blockUnderMinecart.getType()).thenReturn(material);
@@ -37,12 +37,11 @@ public class MinecartStateTest {
 
     World world = Mockito.mock(World.class);
     Mockito.when(world.getBlockAt(minecartLocation)).thenReturn(blockUnderMinecart);
-    Mockito.when(blockUnderMinecart.getRelative(blockToLeftDirection))
-        .thenReturn(blockToLeftOfMinecart);
+    Mockito.when(blockUnderMinecart.getRelative(0, -2, 0)).thenReturn(blockUnderRail);
 
     Sign sign = Mockito.mock(Sign.class);
-    Mockito.when(blockToLeftOfMinecart.getType()).thenReturn(Material.OAK_WALL_SIGN);
-    Mockito.when(blockToLeftOfMinecart.getState()).thenReturn(sign);
+    Mockito.when(blockUnderRail.getType()).thenReturn(Material.OAK_SIGN);
+    Mockito.when(blockUnderRail.getState()).thenReturn(sign);
 
     SignSide frontOfSign = Mockito.mock(SignSide.class);
     Mockito.when(sign.getSide(Side.FRONT)).thenReturn(frontOfSign);
@@ -91,8 +90,7 @@ public class MinecartStateTest {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.NORTH, BlockFace.WEST, Shape.SOUTH_EAST);
+        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.NORTH, Shape.SOUTH_EAST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -105,8 +103,7 @@ public class MinecartStateTest {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.NORTH, BlockFace.WEST, Shape.SOUTH_WEST);
+        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.NORTH, Shape.SOUTH_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -119,8 +116,7 @@ public class MinecartStateTest {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.NORTH, BlockFace.WEST, Shape.NORTH_SOUTH);
+        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.NORTH, Shape.NORTH_SOUTH);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -133,8 +129,7 @@ public class MinecartStateTest {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.SOUTH, BlockFace.EAST, Shape.SOUTH_WEST);
+        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.SOUTH, Shape.SOUTH_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -147,8 +142,7 @@ public class MinecartStateTest {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.SOUTH, BlockFace.EAST, Shape.NORTH_WEST);
+        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.SOUTH, Shape.NORTH_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -161,8 +155,7 @@ public class MinecartStateTest {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.SOUTH, BlockFace.EAST, Shape.NORTH_EAST);
+        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.SOUTH, Shape.NORTH_EAST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -175,8 +168,7 @@ public class MinecartStateTest {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
     Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.SOUTH, BlockFace.EAST, Shape.NORTH_SOUTH);
+        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.SOUTH, Shape.NORTH_SOUTH);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -188,9 +180,7 @@ public class MinecartStateTest {
   public void testHeadingEastOnSouthEastTrack() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.EAST, BlockFace.NORTH, Shape.SOUTH_EAST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.EAST, Shape.SOUTH_EAST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -202,9 +192,7 @@ public class MinecartStateTest {
   public void testHeadingEastOnSouthWestTrack() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.EAST, BlockFace.NORTH, Shape.SOUTH_WEST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.EAST, Shape.SOUTH_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -216,9 +204,7 @@ public class MinecartStateTest {
   public void testHeadingEastOnNorthWestTrack() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.EAST, BlockFace.NORTH, Shape.NORTH_WEST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.EAST, Shape.NORTH_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -230,8 +216,7 @@ public class MinecartStateTest {
   public void testHeadingEastOnEastWestTrack() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.EAST, BlockFace.NORTH, Shape.EAST_WEST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.EAST, Shape.EAST_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -243,9 +228,7 @@ public class MinecartStateTest {
   public void testHeadingWestOnNorthEastTrack() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.WEST, BlockFace.SOUTH, Shape.NORTH_EAST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.WEST, Shape.NORTH_EAST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -257,9 +240,7 @@ public class MinecartStateTest {
   public void testHeadingWestOnSouthEastTrack() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(
-            BlockFace.WEST, BlockFace.SOUTH, Shape.SOUTH_EAST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.WEST, Shape.SOUTH_EAST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -271,8 +252,7 @@ public class MinecartStateTest {
   public void testHeadingWestOnEastWestTrack() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.WEST, BlockFace.SOUTH, Shape.EAST_WEST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.WEST, Shape.EAST_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -284,8 +264,7 @@ public class MinecartStateTest {
   public void testMaxSpeedUpdatedWhenPassingSignOnLeft() {
     BukkitScheduler scheduler = Mockito.mock(BukkitScheduler.class);
 
-    Minecart minecart =
-        this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.WEST, BlockFace.SOUTH, Shape.EAST_WEST);
+    Minecart minecart = this.setUpMinecartAndRailwayWithSpeedSign(BlockFace.WEST, Shape.EAST_WEST);
 
     MinecartState minecartState = new MinecartState(minecart, scheduler);
     minecartState.move();
@@ -301,7 +280,7 @@ public class MinecartStateTest {
     Location minecartLocation = Mockito.mock(Location.class);
 
     Block blockUnderMinecart = Mockito.mock(Block.class);
-    Block blockToLeftOfMinecart = Mockito.mock(Block.class);
+    Block blockUnderRail = Mockito.mock(Block.class);
     Material material = Material.RAIL;
 
     Mockito.when(blockUnderMinecart.getType()).thenReturn(material);
@@ -313,11 +292,11 @@ public class MinecartStateTest {
 
     World world = Mockito.mock(World.class);
     Mockito.when(world.getBlockAt(minecartLocation)).thenReturn(blockUnderMinecart);
-    Mockito.when(blockUnderMinecart.getRelative(BlockFace.WEST)).thenReturn(blockToLeftOfMinecart);
+    Mockito.when(blockUnderMinecart.getRelative(0, -2, 0)).thenReturn(blockUnderRail);
 
     Sign sign = Mockito.mock(Sign.class);
-    Mockito.when(blockToLeftOfMinecart.getType()).thenReturn(Material.OAK_WALL_SIGN);
-    Mockito.when(blockToLeftOfMinecart.getState()).thenReturn(sign);
+    Mockito.when(blockUnderRail.getType()).thenReturn(Material.OAK_WALL_SIGN);
+    Mockito.when(blockUnderRail.getState()).thenReturn(sign);
 
     SignSide frontOfSign = Mockito.mock(SignSide.class);
     Mockito.when(sign.getSide(Side.FRONT)).thenReturn(frontOfSign);
@@ -342,7 +321,7 @@ public class MinecartStateTest {
     Location minecartLocation = Mockito.mock(Location.class);
 
     Block blockUnderMinecart = Mockito.mock(Block.class);
-    Block blockToLeftOfMinecart = Mockito.mock(Block.class);
+    Block blockUnderRail = Mockito.mock(Block.class);
     Material material = Material.RAIL;
 
     Mockito.when(blockUnderMinecart.getType()).thenReturn(material);
@@ -354,11 +333,11 @@ public class MinecartStateTest {
 
     World world = Mockito.mock(World.class);
     Mockito.when(world.getBlockAt(minecartLocation)).thenReturn(blockUnderMinecart);
-    Mockito.when(blockUnderMinecart.getRelative(BlockFace.WEST)).thenReturn(blockToLeftOfMinecart);
+    Mockito.when(blockUnderMinecart.getRelative(0, -2, 0)).thenReturn(blockUnderRail);
 
     Sign sign = Mockito.mock(Sign.class);
-    Mockito.when(blockToLeftOfMinecart.getType()).thenReturn(Material.OAK_WALL_SIGN);
-    Mockito.when(blockToLeftOfMinecart.getState()).thenReturn(sign);
+    Mockito.when(blockUnderRail.getType()).thenReturn(Material.OAK_WALL_SIGN);
+    Mockito.when(blockUnderRail.getState()).thenReturn(sign);
 
     SignSide frontOfSign = Mockito.mock(SignSide.class);
     Mockito.when(sign.getSide(Side.FRONT)).thenReturn(frontOfSign);
@@ -384,7 +363,7 @@ public class MinecartStateTest {
     Location minecartLocation = Mockito.mock(Location.class);
 
     Block blockUnderMinecart = Mockito.mock(Block.class);
-    Block blockToLeftOfMinecart = Mockito.mock(Block.class);
+    Block blockUnderRail = Mockito.mock(Block.class);
     Material material = Material.RAIL;
 
     Mockito.when(blockUnderMinecart.getType()).thenReturn(material);
@@ -396,11 +375,11 @@ public class MinecartStateTest {
 
     World world = Mockito.mock(World.class);
     Mockito.when(world.getBlockAt(minecartLocation)).thenReturn(blockUnderMinecart);
-    Mockito.when(blockUnderMinecart.getRelative(BlockFace.WEST)).thenReturn(blockToLeftOfMinecart);
+    Mockito.when(blockUnderMinecart.getRelative(0, -2, 0)).thenReturn(blockUnderRail);
 
     Sign sign = Mockito.mock(Sign.class);
-    Mockito.when(blockToLeftOfMinecart.getType()).thenReturn(Material.OAK_WALL_SIGN);
-    Mockito.when(blockToLeftOfMinecart.getState()).thenReturn(sign);
+    Mockito.when(blockUnderRail.getType()).thenReturn(Material.OAK_WALL_SIGN);
+    Mockito.when(blockUnderRail.getState()).thenReturn(sign);
 
     SignSide frontOfSign = Mockito.mock(SignSide.class);
     Mockito.when(sign.getSide(Side.FRONT)).thenReturn(frontOfSign);
@@ -426,7 +405,7 @@ public class MinecartStateTest {
     Location minecartLocation = Mockito.mock(Location.class);
 
     Block blockUnderMinecart = Mockito.mock(Block.class);
-    Block blockToLeftOfMinecart = Mockito.mock(Block.class);
+    Block blockUnderRail = Mockito.mock(Block.class);
     Material material = Material.RAIL;
 
     Mockito.when(blockUnderMinecart.getType()).thenReturn(material);
@@ -438,11 +417,11 @@ public class MinecartStateTest {
 
     World world = Mockito.mock(World.class);
     Mockito.when(world.getBlockAt(minecartLocation)).thenReturn(blockUnderMinecart);
-    Mockito.when(blockUnderMinecart.getRelative(BlockFace.WEST)).thenReturn(blockToLeftOfMinecart);
+    Mockito.when(blockUnderMinecart.getRelative(0, -2, 0)).thenReturn(blockUnderRail);
 
     Sign sign = Mockito.mock(Sign.class);
-    Mockito.when(blockToLeftOfMinecart.getType()).thenReturn(Material.OAK_WALL_SIGN);
-    Mockito.when(blockToLeftOfMinecart.getState()).thenReturn(sign);
+    Mockito.when(blockUnderRail.getType()).thenReturn(Material.OAK_SIGN);
+    Mockito.when(blockUnderRail.getState()).thenReturn(sign);
 
     SignSide frontOfSign = Mockito.mock(SignSide.class);
     Mockito.when(sign.getSide(Side.FRONT)).thenReturn(frontOfSign);
